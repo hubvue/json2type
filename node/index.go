@@ -10,22 +10,29 @@ type Node struct {
 	Children interface{}
 }
 
+const (
+	StringType = "string"
+	FloatType  = "float"
+	ListType   = "list"
+	StructType = "struct"
+)
+
 // Structure2Node xxx
 func Structure2Node(key string, value interface{}) Node {
 	var node Node
 	switch value.(type) {
 	case string:
 		node.Name = key
-		node.Type = "string"
+		node.Type = StringType
 		node.Children = value
 	case float64:
 		node.Name = key
-		node.Type = "float64"
+		node.Type = FloatType
 		node.Children = value
 	case []interface{}:
 		data := value.([]interface{})
 		node.Name = key
-		node.Type = "list"
+		node.Type = ListType
 		var children []Node
 		for idx, child := range data {
 			children = append(children, Structure2Node("child_"+strconv.Itoa(idx), child))
@@ -34,7 +41,7 @@ func Structure2Node(key string, value interface{}) Node {
 	case map[string]interface{}:
 		data := value.(map[string]interface{})
 		node.Name = key
-		node.Type = "struct"
+		node.Type = StructType
 		children := map[string]Node{}
 		for childName, child := range data {
 			children[childName] = Structure2Node(childName, child)
