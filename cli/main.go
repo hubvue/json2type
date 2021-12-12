@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	fileJson, err := ioutil.ReadFile("../json.json")
+	fileJson, err := ioutil.ReadFile("../json/list.json")
 	if err != nil {
 		fmt.Println(err)
 	}

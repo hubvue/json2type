@@ -1,9 +1,12 @@
 package node
 
+import (
+	"strconv"
+)
 
 type Node struct {
-	Name string
-	Type string
+	Name     string
+	Type     string
 	Children interface{}
 }
 
@@ -22,10 +25,10 @@ func Structure2Node(key string, value interface{}) Node {
 	case []interface{}:
 		data := value.([]interface{})
 		node.Name = key
-		node.Type = "[]-any"
+		node.Type = "list"
 		var children []Node
 		for idx, child := range data {
-			children = append(children, Structure2Node("child_" + string(idx), child))
+			children = append(children, Structure2Node("child_"+strconv.Itoa(idx), child))
 		}
 		node.Children = children
 	case map[string]interface{}:

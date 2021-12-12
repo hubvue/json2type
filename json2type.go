@@ -29,5 +29,3 @@ func Parser(input []byte, language string, name string) (string, error) {
 
 	return result, nil
 }
-
-
