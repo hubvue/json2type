@@ -11,5 +11,16 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	json2type.Parser(fileJson, "go", "auto")
+	code, err := json2type.Parser(fileJson, "typescript", "auto")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(code)
+	//jsonStr, err := json.Marshal([]string{"string", "number", "Text"})
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(string(jsonStr))
+	//var list []string
+	//fmt.Println(list)
 }

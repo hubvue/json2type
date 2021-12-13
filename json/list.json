@@ -1,12 +1,3 @@
 [
-  {
-    "name": "kim",
-    "age": 12,
-    "sex": 12.123
-  },
-  {
-    "name": "kim",
-    "age": 12,
-    "sex": 12.123
-  }
+"string", "number", "Text"
 ]
