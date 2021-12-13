@@ -25,6 +25,7 @@ func main() {
 	filePath := pwd + "/" + *input
 	_, err = os.Stat(filePath)
 	if os.IsNotExist(err) || path.Ext(filePath) != ".json" {
+		flag.Usage()
 		errorHandler("file not found or is not json file", nil)
 	}
 
@@ -43,7 +44,9 @@ func main() {
 }
 
 func errorHandler(message string, err error) {
-	flag.Usage()
-	fmt.Fprintln(os.Stderr, message, err)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, message, err)
+	}
+	fmt.Fprintln(os.Stderr, message)
 	os.Exit(1)
 }
