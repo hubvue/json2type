@@ -3,20 +3,22 @@ package generator
 import (
 	"fmt"
 	"github.com/hubvue/json2type/node"
+	"github.com/hubvue/json2type/util"
 	"strings"
 )
 
 var nodeTypeToTsType = map[string]string{
-	node.FloatType: "number",
+	node.FloatType:  "number",
 	node.StringType: "string",
-	node.ListType: "[]",
+	node.BoolType:   "boolean",
+	node.ListType:   "[]",
 	node.StructType: "interface",
 }
 
 func GenerateTs(n node.Node) string {
 	code, extractCode := genTsCode(n)
 	if n.Type == node.ListType && strings.Contains(code, "[]") {
-		code = fmt.Sprintf("type %s = %s", n.Name, code)
+		code = fmt.Sprintf("type %s = %s", util.SnakeToCamel(n.Name, true), code)
 	} else {
 		code = ""
 	}
@@ -27,13 +29,16 @@ func GenerateTs(n node.Node) string {
 func genTsCode(n node.Node) (string, string) {
 	var code string
 	var extractCode string
-
+	var name = util.SnakeToCamel(n.Name, true)
 	switch n.Type {
 	case node.StringType:
 		code = nodeTypeToTsType[node.StringType]
 		break
 	case node.FloatType:
 		code = nodeTypeToTsType[node.FloatType]
+		break
+	case node.BoolType:
+		code = nodeTypeToTsType[node.BoolType]
 		break
 	case node.ListType:
 		children := n.Children.([]node.Node)
@@ -48,8 +53,8 @@ func genTsCode(n node.Node) (string, string) {
 		if isInline {
 			code = listType
 		} else {
-			extractCode += fmt.Sprintf("type %s = %s\n", n.Name, listType)
-			code = n.Name
+			extractCode += fmt.Sprintf("type %s = %s\n", name, listType)
+			code = name
 		}
 		break
 	case node.StructType:
@@ -60,13 +65,13 @@ func genTsCode(n node.Node) (string, string) {
 			childrenType[k] = childCode
 			extractCode += extractChildType
 		}
-		var structType = fmt.Sprintf("%s %s {\n",nodeTypeToTsType[node.StructType], n.Name)
+		var structType = fmt.Sprintf("%s %s {\n", nodeTypeToTsType[node.StructType], name)
 		for k, childType := range childrenType {
-			structType += fmt.Sprintf("    %s: %s\n", k, childType)
+			structType += fmt.Sprintf("    %s: %s\n", util.SnakeToCamel(k, false), childType)
 		}
-		structType += "}"
+		structType += "}\n"
 		extractCode += structType
-		code = n.Name
+		code = name
 		break
 	}
 	return code, extractCode
@@ -84,7 +89,7 @@ func normalizeListTypes(types []string) (string, bool) {
 	return fmt.Sprintf("[%s]", listTypeStr), false
 }
 
-func checkListAllTypes(types [] string) bool {
+func checkListAllTypes(types []string) bool {
 	var flagType string
 	for _, t := range types {
 		if flagType == "" {

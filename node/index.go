@@ -13,6 +13,7 @@ type Node struct {
 const (
 	StringType = "string"
 	FloatType  = "float"
+	BoolType   = "bool"
 	ListType   = "list"
 	StructType = "struct"
 )
@@ -21,14 +22,20 @@ const (
 func Structure2Node(key string, value interface{}) Node {
 	var node Node
 	switch value.(type) {
+	case bool:
+		node.Name = key
+		node.Type = BoolType
+		node.Children = value
 	case string:
 		node.Name = key
 		node.Type = StringType
 		node.Children = value
+		break
 	case float64:
 		node.Name = key
 		node.Type = FloatType
 		node.Children = value
+		break
 	case []interface{}:
 		data := value.([]interface{})
 		node.Name = key
@@ -38,6 +45,7 @@ func Structure2Node(key string, value interface{}) Node {
 			children = append(children, Structure2Node("child_"+strconv.Itoa(idx), child))
 		}
 		node.Children = children
+		break
 	case map[string]interface{}:
 		data := value.(map[string]interface{})
 		node.Name = key
@@ -47,6 +55,7 @@ func Structure2Node(key string, value interface{}) Node {
 			children[childName] = Structure2Node(childName, child)
 		}
 		node.Children = children
+		break
 	}
 	return node
 }

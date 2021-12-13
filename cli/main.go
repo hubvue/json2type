@@ -23,4 +23,6 @@ func main() {
 	//fmt.Println(string(jsonStr))
 	//var list []string
 	//fmt.Println(list)
+
+	//fmt.Println(util.SnakeToCamel("abc_abc_0"))
 }
