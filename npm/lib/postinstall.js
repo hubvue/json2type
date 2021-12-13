@@ -9,10 +9,10 @@ const ARCH_MAPPING = {
   "arm": "arm"
 }
 
-
 const install = async () => {
   try {
-    const commandPath = resolve(__dirname, `../dist/json2type_${process.platform}_${ARCH_MAPPING[process.arch]}/json2type`)
+    const extname = process.platform === 'windows' ? '.exe' : ''
+    const commandPath = resolve(__dirname, `../dist/json2type_${process.platform}_${ARCH_MAPPING[process.arch]}/json2type${extname}`)
     await execShellCommand(`cp ${commandPath} ${BIN_PATH}/json2type`)
     console.log('Install cli successfully!')
   } catch(err) {

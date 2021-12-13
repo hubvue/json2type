@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "node ./lib/postinstall.js install",
-    "postuninstall": "node ./lib/postinstall.js uninstall"
+    "preuninstall": "node ./lib/postinstall.js uninstall"
   },
   "author": "hubvue",
   "license": "MIT"
