@@ -4,8 +4,14 @@ import (
 	"fmt"
 	"github.com/hubvue/json2type/node"
 	"github.com/hubvue/json2type/util"
+	"sort"
 	"strings"
 )
+
+type extractCode struct {
+	Name string
+	Code string
+}
 
 var nodeTypeToTsType = map[string]string{
 	node.FloatType:  "number",
@@ -16,20 +22,20 @@ var nodeTypeToTsType = map[string]string{
 }
 
 func GenerateTs(n node.Node) string {
-	code, extractCode := genTsCode(n)
+	extractCodeMap := map[string]extractCode{}
+	code := genTsCode(n, extractCodeMap)
 	if n.Type == node.ListType && strings.Contains(code, "[]") {
 		code = fmt.Sprintf("type %s = %s", util.SnakeToCamel(n.Name, true), code)
 	} else {
 		code = ""
 	}
-	code = fmt.Sprintf("%s\n%s", extractCode, code)
+	extractTypeCode := genExtractTypeCode(extractCodeMap)
+	code = fmt.Sprintf("%s\n%s", extractTypeCode, code)
 	return strings.Trim(code, "\n")
 }
 
-func genTsCode(n node.Node) (string, string) {
+func genTsCode(n node.Node, extractCodeMap map[string]extractCode) string {
 	var code string
-	var extractCode string
-	var name = util.SnakeToCamel(n.Name, true)
 	switch n.Type {
 	case node.StringType:
 		code = nodeTypeToTsType[node.StringType]
@@ -44,37 +50,29 @@ func genTsCode(n node.Node) (string, string) {
 		children := n.Children.([]node.Node)
 		var childrenType []string
 		for _, child := range children {
-			childCode, extractChildType := genTsCode(child)
-			extractCode += fmt.Sprintf("%s\n", extractChildType)
+			childCode := genTsCode(child, extractCodeMap)
 			childrenType = append(childrenType, childCode)
 		}
-		// normalize 数组类型
-		listType, isInline := normalizeListTypes(childrenType)
-		if isInline {
-			code = listType
-		} else {
-			extractCode += fmt.Sprintf("type %s = %s\n", name, listType)
-			code = name
-		}
+		code = extractType(n, childrenType, extractCodeMap)
 		break
 	case node.StructType:
 		children := n.Children.(map[string]node.Node)
 		childrenType := map[string]string{}
 		for k, child := range children {
-			childCode, extractChildType := genTsCode(child)
+			childCode := genTsCode(child, extractCodeMap)
 			childrenType[k] = childCode
-			extractCode += extractChildType
 		}
-		var structType = fmt.Sprintf("%s %s {\n", nodeTypeToTsType[node.StructType], name)
-		for k, childType := range childrenType {
-			structType += fmt.Sprintf("    %s: %s\n", util.SnakeToCamel(k, false), childType)
-		}
-		structType += "}\n"
-		extractCode += structType
-		code = name
+		code = extractType(n, childrenType, extractCodeMap)
 		break
 	}
-	return code, extractCode
+	return code
+}
+
+func genExtractTypeCode(extractCodeMap map[string]extractCode) (code string) {
+	for _, extractValue := range extractCodeMap {
+		code += extractValue.Code
+	}
+	return code
 }
 
 func normalizeListTypes(types []string) (string, bool) {
@@ -101,4 +99,55 @@ func checkListAllTypes(types []string) bool {
 		}
 	}
 	return true
+}
+
+func extractType(n node.Node, childrenType interface{}, extractCodeMap map[string]extractCode) (typeName string) {
+	switch n.Type {
+	case node.ListType:
+		types := childrenType.([]string)
+		listType, isInline := normalizeListTypes(types)
+		if isInline {
+			typeName = listType
+		} else {
+			extractKey := strings.Join(types, "-")
+			extractValue, ok := extractCodeMap[extractKey]
+			if ok {
+				typeName = extractValue.Name
+			} else {
+				name := util.SnakeToCamel(n.Name, true)
+				typeName = name
+				typeCode := fmt.Sprintf("type %s = %s\n", name, listType)
+				extractCodeMap[extractKey] = extractCode{
+					Name: name,
+					Code: typeCode,
+				}
+			}
+		}
+	case node.StructType:
+		types := childrenType.(map[string]string)
+		var extractList []string
+		for childName, childType := range types {
+			extractList = append(extractList, fmt.Sprintf("%s-%s", childName, childType))
+		}
+		// fix: solving the map random traversal problem
+		sort.Strings(extractList)
+		extractKey := strings.Join(extractList, "-")
+		extractValue, ok := extractCodeMap[extractKey]
+		if ok {
+			typeName = extractValue.Name
+		} else {
+			name := util.SnakeToCamel(n.Name, true)
+			typeName = name
+			var typeCode = fmt.Sprintf("%s %s {\n", nodeTypeToTsType[node.StructType], name)
+			for k, childType := range types {
+				typeCode += fmt.Sprintf("    %s: %s\n", util.SnakeToCamel(k, false), childType)
+			}
+			typeCode += "}\n"
+			extractCodeMap[extractKey] = extractCode{
+				Name: name,
+				Code: typeCode,
+			}
+		}
+	}
+	return typeName
 }
