@@ -1,23 +1,49 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/hubvue/json2type"
 	"io/ioutil"
+	"os"
+	"path"
+)
+
+var (
+	input = flag.String("input", "", "the file of the json file")
+	name = flag.String("name", "auto", "the name of the type name")
+	output = flag.String("output", "output", "the name of the file to write the output to (outputs to output.[ext] by default)")
 )
 
 func main() {
-	fileJson, err := ioutil.ReadFile("../json/list.json")
+	flag.Parse()
+
+	pwd, err := os.Getwd()
 	if err != nil {
-		fmt.Println(err)
+		errorHandler("failed to get current directory", nil)
 	}
-	code, err := json2type.Parser(fileJson, "typescript", "auto")
+	filePath := pwd + "/" + *input
+	_, err = os.Stat(filePath)
+	if os.IsNotExist(err) || path.Ext(filePath) != ".json" {
+		errorHandler("file not found or is not json file", nil)
+	}
+
+	fileJson, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		fmt.Println(err)
+		errorHandler("read json file err: ", err)
 	}
-	fmt.Println(code)
-	err = ioutil.WriteFile("tmp.ts", []byte(code), 0777)
+	code, err := json2type.Parser(fileJson, "typescript", *name)
 	if err != nil {
-		fmt.Println("write file error: ", err)
+		errorHandler("parser json err: ", err)
 	}
+	err = ioutil.WriteFile(*output + ".ts", []byte(code), 0777)
+	if err != nil {
+		errorHandler("output file err: ", err)
+	}
+}
+
+func errorHandler(message string, err error) {
+	flag.Usage()
+	fmt.Fprintln(os.Stderr, message, err)
+	os.Exit(1)
 }
