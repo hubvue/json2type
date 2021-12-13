@@ -8,9 +8,26 @@ convert JSON of a specific format to a type structure(Typescript type or more)
 
 #### Install
 
-> go install github.com/hubvue/json2type/json2type@latest
+use go tool install
 
+```shell
+go install github.com/hubvue/json2type/json2type@latest
+```
+
+use npm/yarn/pnpm
+```shell
+# npm
+npm install @cckim/json2type -g
+# yarn
+yarn global add @cckim/json2type
+# pnpm
+pnpm add @cckim/json2type --global
+```
 #### Usage
+
+```shell
+json2type help
+```
 
 ```txt
 Usage of json2type:
@@ -22,7 +39,9 @@ Usage of json2type:
     	the name of the file to write the output to (outputs to output.[ext] by default) (default "output")
 ```
 
-> json2type -input=tmp.json
+```shell
+json2type -input=tmp.json
+```
 
 ##### Example
 ```json
@@ -41,8 +60,9 @@ interface Auto {
 
 ### Package
 
-> go get github.com/hubvue/json2type
-
+```shell
+go get github.com/hubvue/json2type
+```
 #### Usage
 
 ```go
