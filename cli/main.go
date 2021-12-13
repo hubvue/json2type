@@ -16,13 +16,8 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(code)
-	//jsonStr, err := json.Marshal([]string{"string", "number", "Text"})
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Println(string(jsonStr))
-	//var list []string
-	//fmt.Println(list)
-
-	//fmt.Println(util.SnakeToCamel("abc_abc_0"))
+	err = ioutil.WriteFile("tmp.ts", []byte(code), 0777)
+	if err != nil {
+		fmt.Println("write file error: ", err)
+	}
 }
