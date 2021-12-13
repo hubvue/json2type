@@ -1,0 +1,15 @@
+{
+  "name": "@cckim/json2type",
+  "version": "0.0.1",
+  "description": "convert JSON of a specific format to a type structure",
+  "repository": "https://github.com/hubvue/json2type",
+  "bin": {
+    "json2type": "./lib/bin.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node ./lib/postinstall.js"
+  },
+  "author": "hubvue",
+  "license": "MIT"
+}
