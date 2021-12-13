@@ -42,7 +42,7 @@ func Structure2Node(key string, value interface{}) Node {
 		node.Type = ListType
 		var children []Node
 		for idx, child := range data {
-			children = append(children, Structure2Node("child_"+strconv.Itoa(idx), child))
+			children = append(children, Structure2Node(key + "_child_"+strconv.Itoa(idx), child))
 		}
 		node.Children = children
 		break
