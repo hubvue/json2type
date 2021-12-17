@@ -1,6 +1,6 @@
 {
   "name": "@cckim/json2type",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "convert JSON of a specific format to a type structure",
   "repository": "https://github.com/hubvue/json2type",
   "main": "index.js",
