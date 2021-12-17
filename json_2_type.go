@@ -19,13 +19,6 @@ func Parser(input []byte, language string, name string) (string, error) {
 	}
 	node := node.Structure2Node(name, decodeResult)
 
-	var result string
-	switch language {
-	case "go":
-		result = generator.GenerateGo(node)
-	case "typescript":
-		result = generator.GenerateTs(node)
-	}
-
+	result := generator.GenerateCode(node, language)
 	return result, nil
 }

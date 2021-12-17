@@ -36,20 +36,20 @@ func TestJson2Ts(t *testing.T) {
 		if !strings.Contains(code, "Child1") {
 			t.Error("parser list error: not found Child1 ")
 		}
-		if !strings.Contains(code, "type Auto = [Child0, Child1]") {
+		if !strings.Contains(code, "type Auto = [AutoChild0, AutoChild1]") {
 			t.Error("parser list error: not found Auto type")
 		}
 	})
 	t.Run("parser embedded same map list", func(t *testing.T) {
 		json := []byte(`[{"name": "kim"}, {"name": "hubvue"}]`)
 		code, _ := json2type.Parser(json, "typescript", "auto")
-		if !strings.Contains(code, "Child0") {
-			t.Error("parser list error: not found Child0")
+		if !strings.Contains(code, "AutoChild0") {
+			t.Error("parser list error: not found AutoChild0")
 		}
-		if strings.Contains(code, "Child1") {
-			t.Error("parser list error: found Child1")
+		if strings.Contains(code, "AutoChild1") {
+			t.Error("parser list error: found AutoChild1")
 		}
-		if !strings.Contains(code, "type Auto = Child0[]") {
+		if !strings.Contains(code, "type Auto = AutoChild0[]") {
 			t.Error("parser list error: not found Auto type")
 		}
 	})
@@ -76,7 +76,7 @@ func TestJson2Ts(t *testing.T) {
 	t.Run("parser embedded complex list map", func(t *testing.T) {
 		json := []byte(`{"name": "kim", "keys": ["string", 123, true]}`)
 		code, _ := json2type.Parser(json, "typescript", "auto")
-		if !strings.Contains(code,"keys: Keys") {
+		if !strings.Contains(code, "keys: Keys") {
 			t.Error("parser map error: not found keys type")
 		}
 		if !strings.Contains(code, "type Keys = [string, number, boolean]") {
