@@ -1,5 +1,5 @@
 # json2type
-convert JSON of a specific format to a type structure(support Typescript type or Go type)
+convert JSON of a specific format to a type structure(support Typescript type and Go type)
 
 
 ## Quick Start
