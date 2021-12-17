@@ -7,6 +7,7 @@ import (
 	"github.com/hubvue/json2type/generator/lang/ts"
 	"github.com/hubvue/json2type/node"
 	"github.com/hubvue/json2type/util"
+	"go/format"
 	"strings"
 )
 
@@ -26,6 +27,13 @@ func GenerateCode(n node.Node, lang string) string {
 	}
 	extractTypeCode := common.GenExtractTypeCode(extractCodeMap)
 	code = fmt.Sprintf("%s\n%s", extractTypeCode, code)
+
+	if lang == "go" {
+		codeByte, err := format.Source([]byte(code))
+		if err == nil {
+			code = string(codeByte)
+		}
+	}
 	return strings.Trim(code, "\n")
 }
 
