@@ -14,7 +14,7 @@ use go tool install
 go install github.com/hubvue/json2type/json2type@latest
 ```
 
-use npm/yarn/pnpm
+use npm/yarn/pnpm install
 ```shell
 # npm
 npm install @cckim/json2type -g
