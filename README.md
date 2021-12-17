@@ -32,9 +32,11 @@ json2type help
 ```txt
 Usage of json2type:
   -input string
-    	the file of the json file
+    	the file of the json file(input parameter is required)
+  -language string
+    	used to convert json to the type of the language(typescript by default) (default "typescript")
   -name string
-    	the name of the type name (default "auto")
+    	the name of the type name(auto by default) (default "auto")
   -output string
     	the name of the file to write the output to (outputs to output.[ext] by default) (default "output")
 ```
