@@ -18,18 +18,18 @@ func TestJson2Go(t *testing.T) {
 	t.Run("parser simple list", func(t *testing.T) {
 		json := []byte(`["string", "number", "Text"]`)
 		expected := `type Auto = []interface{}`
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		assertCorrectMessage(t, expected, code)
 	})
 	t.Run("parser complex list", func(t *testing.T) {
 		json := []byte(`["string", 1, true]`)
 		expected := `type Auto = []interface{}`
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		assertCorrectMessage(t, expected, code)
 	})
 	t.Run("parser embedded map list", func(t *testing.T) {
 		json := []byte(`[{"name": "kim"}, {"age": 123}]`)
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		if !strings.Contains(code, "Name") && !strings.Contains(code, "string") {
 			t.Error("parser list error: not found Name and string type")
 		}
@@ -45,7 +45,7 @@ func TestJson2Go(t *testing.T) {
 	})
 	t.Run("parser embedded same map list", func(t *testing.T) {
 		json := []byte(`[{"name": "kim"}, {"name": "hubvue"}]`)
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		if !strings.Contains(code, "Name") && !strings.Contains(code, "string") {
 			t.Error("parser list error: not found Name and string type")
 		}
@@ -55,7 +55,7 @@ func TestJson2Go(t *testing.T) {
 	})
 	t.Run("parser simple map", func(t *testing.T) {
 		json := []byte(`{"name": "kim", "age": 18}`)
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		if !strings.Contains(code, "struct") {
 			t.Error("parser map error: not found struct keyword")
 		}
@@ -74,14 +74,14 @@ func TestJson2Go(t *testing.T) {
 	})
 	t.Run("parser embedded simple list map", func(t *testing.T) {
 		json := []byte(`{"name": "kim", "keys": ["string", "number"]}`)
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		if !strings.Contains(code, "Keys") && !strings.Contains(code, "[]interface{}") {
 			t.Error("parser map error: not found Keys and []interface{}")
 		}
 	})
 	t.Run("parser embedded complex list map", func(t *testing.T) {
 		json := []byte(`{"name": "kim", "keys": [{ "name": "item1"},{ "age": 123}]}`)
-		code, _ := json2type.Parser(json, "go", "auto")
+		code, _ := json2type.Run(json, "go", "auto")
 		if !strings.Contains(code, "keys") && !strings.Contains(code, "[]KeysItem") {
 			t.Error("parser map error: not found Keys and []KeysItem type")
 		}

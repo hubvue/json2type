@@ -1,15 +1,16 @@
-package golang
+package generator
 
 import (
 	"fmt"
-	"github.com/hubvue/json2type/generator/common"
-	"github.com/hubvue/json2type/node"
-	"github.com/hubvue/json2type/util"
+	"github.com/hubvue/json2type/internal/generate/common"
+	"github.com/hubvue/json2type/internal/node"
+	"github.com/hubvue/json2type/internal/util"
+	"go/format"
 	"sort"
 	"strings"
 )
 
-var NodeTypeToType = map[string]string{
+var nodeTypeToGoType = map[string]string{
 	node.FloatType:  "float64",
 	node.StringType: "string",
 	node.BoolType:   "bool",
@@ -17,8 +18,22 @@ var NodeTypeToType = map[string]string{
 	node.StructType: "struct",
 }
 
-// ExtractListType get list type-name and extract common type
-func ExtractListType(n node.Node, childrenTypeName []string, extractCodeMap map[string]common.ExtractCode) string {
+type goGenerator struct{}
+
+func NewGoGenerator() *goGenerator {
+	return &goGenerator{}
+}
+
+func (gen *goGenerator) GenStringType(n node.Node, extractCodeMap map[string]common.ExtractCode) string {
+	return nodeTypeToGoType[node.StringType]
+}
+func (gen *goGenerator) GenFloatType(n node.Node, extractCodeMap map[string]common.ExtractCode) string {
+	return nodeTypeToGoType[node.FloatType]
+}
+func (gen *goGenerator) GenBoolType(n node.Node, extractCodeMap map[string]common.ExtractCode) string {
+	return nodeTypeToGoType[node.BoolType]
+}
+func (gen *goGenerator) GenListType(n node.Node, childrenTypeName []string, extractCodeMap map[string]common.ExtractCode) string {
 	var childrenExtractType [][]string
 	// get extract type children type
 	for _, typeName := range childrenTypeName {
@@ -49,6 +64,11 @@ func ExtractListType(n node.Node, childrenTypeName []string, extractCodeMap map[
 	}
 	extractKey := strings.Join(extractItemKey, "|")
 	code += "}\n"
+	// format
+	codeByte, err := format.Source([]byte(code))
+	if err == nil {
+		code = string(codeByte)
+	}
 	extractCodeMap[extractKey] = common.ExtractCode{
 		Name: extractTypeName,
 		Code: code,
@@ -56,9 +76,8 @@ func ExtractListType(n node.Node, childrenTypeName []string, extractCodeMap map[
 
 	return "[]" + extractTypeName
 }
-
-// ExtractStructType get struct type-name and extract common type
-func ExtractStructType(n node.Node, childrenTypeMap map[string]string, extractCodeMap map[string]common.ExtractCode) (typeName string) {
+func (gen *goGenerator) GenStructType(n node.Node, childrenTypeMap map[string]string, extractCodeMap map[string]common.ExtractCode) string {
+	var typeName string
 	var extractList []string
 	for childName, childType := range childrenTypeMap {
 		extractList = append(extractList, fmt.Sprintf("%s-%s", childName, childType))
@@ -70,14 +89,19 @@ func ExtractStructType(n node.Node, childrenTypeMap map[string]string, extractCo
 		typeName = extractValue.Name
 	} else {
 		typeName = util.SnakeToCamel(n.Name, true)
-		var typeCode = fmt.Sprintf("type %s struct {\n", typeName)
+		var code = fmt.Sprintf("type %s struct {\n", typeName)
 		for k, childType := range childrenTypeMap {
-			typeCode += fmt.Sprintf("    %s %s `json:\"%s\"`\n", util.SnakeToCamel(k, true), childType, k)
+			code += fmt.Sprintf("    %s %s `json:\"%s\"`\n", util.SnakeToCamel(k, true), childType, k)
 		}
-		typeCode += "}\n"
+		code += "}\n"
+		// format
+		codeByte, err := format.Source([]byte(code))
+		if err == nil {
+			code = string(codeByte)
+		}
 		extractCodeMap[extractKey] = common.ExtractCode{
 			Name: typeName,
-			Code: typeCode,
+			Code: code,
 		}
 	}
 	return typeName
@@ -95,9 +119,9 @@ func getExtractKeyByName(typeName string, extractCodeMap map[string]common.Extra
 
 // isInlineType base type and list type
 func isInlineType(typeName string) bool {
-	if typeName == NodeTypeToType[node.BoolType] ||
-		typeName == NodeTypeToType[node.FloatType] ||
-		typeName == NodeTypeToType[node.StringType] ||
+	if typeName == nodeTypeToGoType[node.BoolType] ||
+		typeName == nodeTypeToGoType[node.FloatType] ||
+		typeName == nodeTypeToGoType[node.StringType] ||
 		isInlineListType(typeName) {
 		return true
 	}

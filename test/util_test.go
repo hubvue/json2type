@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/hubvue/json2type/util"
+	"github.com/hubvue/json2type/internal/util"
 	"testing"
 )
 

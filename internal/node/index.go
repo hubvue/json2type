@@ -1,8 +1,6 @@
 package node
 
-import (
-	"strconv"
-)
+import "strconv"
 
 type Node struct {
 	Name     string
