@@ -38,7 +38,7 @@ Usage of json2type:
   -name string
     	the name of the type name(auto by default) (default "auto")
   -output string
-    	the name of the file to write the output to (outputs to output.[ext] by default) (default "output")
+    	the name of the file to write the output to (outputs to stdout by default)
 ```
 
 ```shell
