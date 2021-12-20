@@ -3,11 +3,20 @@
   "version": "0.1.1",
   "description": "convert JSON of a specific format to a type structure",
   "repository": "https://github.com/hubvue/json2type",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "bin": {
+    "json2type": "./bin/index.js"
+  },
   "scripts": {
+    "build": "tsc",
     "postinstall": "node ./lib/postinstall.js install",
     "preuninstall": "node ./lib/postinstall.js uninstall"
   },
   "author": "hubvue",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^17.0.1",
+    "typescript": "^4.5.4"
+  }
 }
