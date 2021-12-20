@@ -2,7 +2,7 @@ const { resolve } = require('path')
 const { exec } = require('child_process')
 const fs = require('fs/promises')
 
-const BIN_PATH = '/Users/didi/work/bin/'
+const BIN_PATH = '~/work/bin/'
 const ARCH_MAPPING = {
   "ia32": "386",
   "x64": "amd64",
