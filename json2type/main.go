@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/hubvue/json2type"
 	"io/ioutil"
 	"os"
 	"path"
+
+	"github.com/hubvue/json2type"
 )
 
 var (
@@ -24,12 +25,16 @@ var extMap = map[string]string{
 func main() {
 	flag.Parse()
 
-	pwd, err := os.Getwd()
-	if err != nil {
-		errorHandler("failed to get current directory", nil)
+	filePath := *input
+	if filePath[0:1] != "/" {
+		pwd, err := os.Getwd()
+		if err != nil {
+			errorHandler("failed to get current directory", nil)
+		}
+		filePath = pwd + "/" + *input
 	}
-	filePath := pwd + "/" + *input
-	_, err = os.Stat(filePath)
+
+	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) || path.Ext(filePath) != ".json" {
 		flag.Usage()
 		errorHandler("file not found or is not json file", nil)
