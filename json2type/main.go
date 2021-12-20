@@ -26,6 +26,10 @@ func main() {
 	flag.Parse()
 
 	filePath := *input
+	if len(filePath) == 0 {
+		flag.Usage()
+		return
+	}
 	if filePath[0:1] != "/" {
 		pwd, err := os.Getwd()
 		if err != nil {
