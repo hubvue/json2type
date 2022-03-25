@@ -17,3 +17,4 @@ vendor/
 json2type/json2type
 dist/
 node_modules/
+.DS_Store
