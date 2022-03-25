@@ -76,7 +76,6 @@ import (
 
 func main() {
 	fileJson, _ := ioutil.ReadFile(jsonFile)
-	// currently only typescript is supported
 	code, _ := json2type.Parser(fileJson, "typescript", "typeName")
 	fmt.Println(code)
 }
