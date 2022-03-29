@@ -2,12 +2,13 @@ package generator
 
 import (
 	"fmt"
-	"github.com/hubvue/json2type/internal/generate/common"
-	"github.com/hubvue/json2type/internal/node"
-	"github.com/hubvue/json2type/internal/util"
 	"go/format"
 	"sort"
 	"strings"
+
+	"github.com/hubvue/json2type/internal/generate/common"
+	"github.com/hubvue/json2type/internal/node"
+	"github.com/hubvue/json2type/internal/util"
 )
 
 var nodeTypeToGoType = map[string]string{
@@ -15,7 +16,7 @@ var nodeTypeToGoType = map[string]string{
 	node.StringType: "string",
 	node.BoolType:   "bool",
 	node.ListType:   "[]interface{}",
-	node.StructType: "struct",
+	node.StructType: "pub struct",
 }
 
 type goGenerator struct{}
